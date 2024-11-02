@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Home | Simple E-Commerce</title>
+    <!-- Link to Bootstrap CSS (optional) -->
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <!-- Link to custom styles -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center my-4">
+            <h1>Welcome to the Simple E-Commerce Website!</h1>
+            <p>Browse our products and enjoy a simple shopping experience.</p>
+        </header>
+
+
+    </div>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="{% static 'bootstrap/bootstrap.bundle.min.js' %}"></script>
+</body>
+{% endblock %}
