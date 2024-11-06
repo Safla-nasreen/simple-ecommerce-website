@@ -1,36 +1,38 @@
+
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomerRegistrationForm, CompanyRegistrationForm
-from .models import UserProfile
+from django.contrib.auth import login, authenticate, logout
+from .forms import UserRegistrationForm
+from .models import UserProfile, Company
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-def register_customer(request):
+
+def register_user(request):
     if request.method == 'POST':
-        form = CustomerRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            UserProfile.objects.create(user=user, user_type='customer')
+
+            user_type = form.cleaned_data['user_type']
+            user_profile = UserProfile.objects.create(user=user, user_type=user_type)
+
+            # If the user type is 'company', create a Company instance
+            if user_type == 'company':
+                Company.objects.create(
+                    user_profile=user_profile,
+                    name=form.cleaned_data['company_name'],
+                    address=form.cleaned_data['address'],
+                    phone_number=form.cleaned_data['phone_number'],
+                    email=user.email
+                )
+
             login(request, user)
             return redirect('home')
     else:
-        form = CustomerRegistrationForm()
-    return render(request, 'users/register_customer.html', {'form': form})
+        form = UserRegistrationForm()
+    return render(request, 'users/register_user.html', {'form': form})
 
-def register_company(request):
-    if request.method == 'POST':
-        form = CompanyRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            UserProfile.objects.create(user=user, user_type='company')
-            login(request, user)
-            return redirect('home')
-    else:
-        form = CompanyRegistrationForm()
-    return render(request, 'users/register_company.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -42,6 +44,7 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
+
 
 def logout_view(request):
     logout(request)

@@ -1,0 +1,29 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <!-- Hide/show fields based on selected user type -->
+        <div id="company-fields" style="display:none;">
+            {{ form.company_name.label_tag }} {{ form.company_name }}
+            {{ form.address.label_tag }} {{ form.address }}
+            {{ form.phone_number.label_tag }} {{ form.phone_number }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+</div>
+
+<script>
+    // JavaScript to toggle company fields visibility
+    document.querySelector('select[name="user_type"]').addEventListener('change', function() {
+        const companyFields = document.getElementById('company-fields');
+        companyFields.style.display = this.value === 'company' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
